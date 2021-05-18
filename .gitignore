@@ -1,3 +1,7 @@
+# Data files cannot be shared for copyright reasons
+# and must be downloaded from the respective source
+data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

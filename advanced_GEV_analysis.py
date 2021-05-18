@@ -1,7 +1,7 @@
 """Methods for statistical analysis with a time-dependent GEV distribution.
 
-This code is based on the book “An Introduction to Statistical Modeling
-of Extreme Values” by Stuart Coles (2001).
+The main reference for this code is the book “An Introduction to
+Statistical Modeling of Extreme Values” by Stuart Coles (2001).
 
 The heart of this library is the function negative_log_likelihood, which
 is intended to be used for a maximum likelihood fit of a (possibly
@@ -67,7 +67,7 @@ to obtain the standard deviations.
 If the fit fails because the desired error was not necessarily achieved
 due to precision loss, then look at the Jacobian (result.jac) and impose
 an appropriate error tolerance by giving the argument, e.g.,
-options={"gtol": 1e-4} 
+options={"gtol": 1e-4}
 to the minimize function.
 
 Possible extensions and improvements:
@@ -95,6 +95,7 @@ Possible extensions and improvements:
 Written by Markus Reinert, August 2020, February 2021.
 """
 
+import calendar
 from enum import Enum
 
 import numpy as np
@@ -264,3 +265,33 @@ def time_dependent_GEV_parameters(
     if len(params) > i:
         raise ValueError("expected {} parameters but {} were given".format(i, len(params)))
     return mu, sigma, xi
+
+
+def get_year_selection(year, time_array):
+    """Get the Boolean array that selects ‘year’ from ‘time_array’.
+
+    The time in ‘time_array’ must be in seconds since the Epoch.
+
+    This function is useful for the selection of annual maxima from a
+    time series.
+    """
+    t_start = calendar.timegm((year, 1, 1, 0, 0, 0, -1, -1, -1))
+    t_end = calendar.timegm((year+1, 1, 1, 0, 0, 0, -1, -1, -1))
+    return (time_array >= t_start) & (time_array < t_end)
+
+
+def get_month_selection(year, month, time_array):
+    """Get the Boolean array that selects ‘year’-‘month’ from ‘time_array’.
+
+    The month must be between 1 and 12.
+    The time in ‘time_array’ must be in seconds since the Epoch.
+
+    This function is useful for the selection of monthly maxima from a
+    time series.
+    """
+    t_start = calendar.timegm((year, month, 1, 0, 0, 0, -1, -1, -1))
+    if month == 12:
+        t_end = calendar.timegm((year+1, 1, 1, 0, 0, 0, -1, -1, -1))
+    else:
+        t_end = calendar.timegm((year, month+1, 1, 0, 0, 0, -1, -1, -1))
+    return (time_array >= t_start) & (time_array < t_end)
