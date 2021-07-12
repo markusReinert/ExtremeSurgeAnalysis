@@ -1,6 +1,6 @@
 """Make a time-independent GEV fit to monthly maxima (MM).
 
-Written by Markus Reinert, June--August 2020, May 2021.
+Written by Markus Reinert, June 2020–July 2021.
 """
 
 import numpy as np
@@ -38,20 +38,19 @@ def GEV(x, mu, sigma, xi):
 data = load_data("Brest", Timeseries.SKEW_SURGE_GESLA)
 
 # Get the maximum value in every month
-months = np.arange(1, 13)
 h_MM = []
 n_years = 0
 for year in range(data["year_start"], data["year_end"] + 1):
     sel_year = get_year_selection(year, data["t"])
     if any(sel_year):
         n_years += 1
-        for month in months:
+        for month in range(1, 13):
             sel = get_month_selection(year, month, data["t"])
             if np.any(sel):
                 value = max(data["h"][sel])
                 if value < -300:
                     # There is an error in the GESLA-2 skew surge
-                    # dataset that we want to catch here
+                    # dataset for Brest, which we want to catch here.
                     print("Neglecting unrealistic outlier of {} m.".format(value))
                 else:
                     h_MM.append(value)
@@ -64,7 +63,7 @@ return_period = lambda P: 1 / (1 - P**(n_months / n_years))
 # Fit a GEV to the extreme values
 result = optimize.minimize(negative_log_likelihood, [10, 15, -0.1], args=(h_MM,))
 if not result.success:
-    print("WARNING:", result.message)
+    print("Warning:", result.message)
 params = result.x
 errors = np.sqrt(np.diag(result.hess_inv))
 
@@ -109,4 +108,4 @@ ax.grid(linestyle=":")
 ax.xaxis.set_major_formatter(ScalarFormatter())
 
 plt.savefig("results/GEV_fit_{}.png".format(data["city"]))
-plt.show(block=False)
+plt.show()
