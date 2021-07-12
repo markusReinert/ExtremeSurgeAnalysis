@@ -8,66 +8,8 @@ from scipy import optimize, stats
 
 from advanced_GEV_analysis import negative_log_likelihood, Modifiers
 from advanced_GEV_analysis import get_month_selection
+from advanced_GEV_analysis import compute_amplitude_and_phase, check_significance
 from tools_surge import load_data, Timeseries, Subseries
-
-
-def check_significance(D, k, alpha=0.05):
-    """Perform a test for significance based on the deviance statistic.
-
-    The test based on the deviance statistic as described by Coles
-    (2001) compares the log-likelihoods of two statistical models, of
-    which one generalises the other.  That means, the more complex model
-    must have the same parameters as the simpler model, and one or
-    several more.  Thus the more complex model has always a higher (or
-    equal) likelihood than the simpler model.  The increase of
-    log-likelihood is compared to a chi-squared distribution to check if
-    the complex model significantly improves the simpler model.
-
-    The result of the statistical test is printed as a text and returned
-    as either True (increase in likelihood is significant) or False
-    (more complex model is not significantly better).
-
-    Input parameters (all non-negative):
-    D:  2-times the difference of log-likelihood,
-    k:  difference in the number of parameters,
-    alpha:  significance level.
-
-    """
-    print(
-        "Does the more complex model significantly improve the simpler model (alpha = {})?"
-        .format(alpha)
-    )
-    D_min = stats.chi2.ppf(1 - alpha, df=k)
-    if D > D_min:
-        print("Yes!  D = {:.2f} > {:.2f}".format(D, D_min))
-        return True
-    else:
-        print("No.  D = {:.2f}, but must be more than {:.2f} for significance".format(D, D_min))
-        return False
-
-
-def compute_amplitude_and_phase(coeff_cos, coeff_sin, std_cos, std_sin):
-    """Compute amplitude and phase of a*cos(t) + b*sin(t).
-
-    The input parameters are coeff_cos (=a) and coeff_sin (=b) and their
-    respective standard errors.
-
-    The return value is (amp, phase, std_amp, std_phase), where:
-     - amp is the amplitude sqrt(a**2 + b**2),
-     - phase is such that tan(phase) = b/a,
-     - std_amp is the standard error of the amplitude,
-     - std_phase is the standard error of the phase.
-
-    """
-    amp = np.sqrt(coeff_cos ** 2 + coeff_sin ** 2)
-    phase = -np.arctan2(-coeff_sin, coeff_cos)
-    std_amp = np.sqrt(
-        (std_cos * coeff_cos / amp) ** 2 + (std_sin * coeff_sin / amp) ** 2
-    )
-    std_phase = np.sqrt(
-        (std_cos * coeff_sin / amp**2)**2 + (std_sin * coeff_cos / amp**2)**2
-    )
-    return amp, phase, std_amp, std_phase
 
 
 data = load_data("Brest", Timeseries.SKEW_SURGE_GESLA)
@@ -144,7 +86,7 @@ if not result.success:
 params_trends = result.x
 errors_trends = np.sqrt(np.diag(result.hess_inv))
 LL_trends = -negative_log_likelihood(params_trends, *args)
-print("\nEstimated GEV parameters for model with annual cycles and linear trends:")
+print("\nEstimated GEV parameters for model with linear trends and annual cycles:")
 for i, name in enumerate([
         "mu", "mu_trend", "mu_cos", "mu_sin",
         "sigma", "sigma_trend", "sigma_cos", "sigma_sin", "xi",
