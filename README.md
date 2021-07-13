@@ -16,3 +16,10 @@ separately from the website https://gesla.org/, the script
 
 Please read the header of the file `tools_GESLA.py` for more details on
 how to obtain the GESLA-2 surge dataset.
+
+The time-dependent GEV model can also depend on the value of a climate
+index like NAO (North Atlantic Oscillation).  This is shown in the file
+`Time-dependent_GEV_fit_with_NAO.py`, which extends the example
+`Time-dependent_GEV_fit.py`.  It requires that climate index data has
+been downloaded from https://psl.noaa.gov/gcos_wgsp/Timeseries/, see
+`tools_climate.py` for more information.
