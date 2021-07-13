@@ -4,7 +4,7 @@ Written by Markus Reinert, June 2020–July 2021.
 """
 
 import numpy as np
-from scipy import optimize, stats
+from scipy import optimize
 
 from advanced_GEV_analysis import negative_log_likelihood, Modifiers
 from advanced_GEV_analysis import get_month_selection

@@ -99,6 +99,7 @@ import calendar
 from enum import Enum
 
 import numpy as np
+from scipy import stats
 
 
 # Minimum value of xi (in magnitude) for which GEV is used instead of Gumbel

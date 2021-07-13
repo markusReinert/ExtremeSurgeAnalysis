@@ -7,7 +7,7 @@ Written by Markus Reinert, June 2020–July 2021.
 """
 
 import numpy as np
-from scipy import optimize, stats
+from scipy import optimize
 
 from advanced_GEV_analysis import negative_log_likelihood, Modifiers
 from advanced_GEV_analysis import get_month_selection
@@ -132,7 +132,7 @@ check_significance(D, k)
 
 # Convert coefficients of cos and sin to amplitude and phase
 print("")
-for name, i_cos in zip(["mu", "sigma"], [2, 6]):
+for name, i_cos in zip(["mu", "sigma"], [2, 7]):
     print("Annual cycle in {}:".format(name))
     amp, phase, std_amp, std_phase = compute_amplitude_and_phase(
         params_cli[i_cos], params_cli[i_cos + 1],
