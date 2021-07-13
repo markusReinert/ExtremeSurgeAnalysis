@@ -104,7 +104,7 @@ args = (
     t_MM,
     [Modifiers.LINEAR_TREND, Modifiers.SEASONAL_OSCILLATION, Modifiers.CLIMATE_INDEX],
     [Modifiers.LINEAR_TREND, Modifiers.SEASONAL_OSCILLATION, Modifiers.CLIMATE_INDEX],
-    None,
+    None,  # value of shape parameter xi, None means “best fit”, 0.0 means Gumbel distribution
     cli_MM,
 )
 params_initial = [round(mu), 0.1, 1, 1, 0.1, round(sigma), 0.1, 1, 1, 0.1, xi]
