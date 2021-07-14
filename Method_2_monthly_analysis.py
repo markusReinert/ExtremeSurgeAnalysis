@@ -48,6 +48,7 @@ def select_winter(monthly_data):
     return start_year_in_july(monthly_data)[3:-3]
 
 
+# Configure the visualisation of confidence intervals
 transp_area = 0.3
 n_sigma = 1.96
 

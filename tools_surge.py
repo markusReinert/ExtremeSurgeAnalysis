@@ -74,7 +74,7 @@ def load_data(city: str, dataset: Timeseries, year_start=None, year_end=None, in
                 "did you want to use SKEW_SURGE_GESLA dataset?"
             )
         data["name"] = "surge (Reinert et al. 2021)"
-        data["full_name"] = "skew surge from yearly predictions (Reinert et al. 2021)"
+        data["full_name"] = "skew surge relative to annual mean sea level (Reinert et al. 2021)"
         print("Reading", data["full_name"], "for", data["city"])
         data["t"], data["h"], high_tides = np.load(SKEW_SURGE_FILE)
         high_tides = np.array(high_tides, dtype=bool)
