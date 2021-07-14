@@ -2,24 +2,34 @@
 Statistical extreme value analysis of storm surge levels with Python.
 
 This repository contains the code belonging to an unpublished manuscript
-by Markus Reinert *et al.* (2021).  Not all the code has been uploaded
-so far, but will be before the manuscript is submitted.  The reference
-to the paper will be added here as soon as it is published.
+by Markus Reinert *et al.* (2021).  The reference to the paper will be
+added here as soon as it is published.
 
-Example usage is shown in the files `Time-independent_GEV_fit.py` and
+Note that the data used in the manuscript cannot be published here for
+copyright reasons and needs to be obtained separately.  The surge
+dataset of the authors can be obtained from the corresponding author
+upon request.  The GESLA-2 surge dataset can be obtained from the
+website https://gesla.org/, as explained in <tools_GESLA.py>.  The NAO
+index data can be obtained from
+https://psl.noaa.gov/gcos_wgsp/Timeseries/, as explained in
+[tools_climate.py].
+
+Given the datasets, the main results of the manuscript can be reproduced
+with the scripts (Method_1_sliding_window_analysis.py) and
+`Method_2_monthly_analysis.py`.  The analysis presented in the
+Discussion can be reproduced with
+`Outlook_winter_shift_in_other_stations.py`.  The parameter estimates of
+the full time-dependent GEV model can be calculated with
+`Time-dependent_GEV_fit_with_NAO.py`.
+
+The functions and methods in this repository may also be used with other
+datasets, for related analyses, or in similar studies.  In particular,
+the script `advanced_GEV_analysis.py` may be useful, which implements
+methods described in the book “An Introduction to Statistical Modeling
+of Extreme Values” by Stuart Coles (2001).  Example usage of this
+library is shown in the files `Time-independent_GEV_fit.py` and
 `Time-dependent_GEV_fit.py`.  With the surge levels for Brest from the
-GESLA-2 dataset (Woodworth et al., 2017), which need to be downloaded
-separately from the website https://gesla.org/, the script
+GESLA-2 dataset (Woodworth et al., 2017), the script
 `Time-independent_GEV_fit.py` produces the following result:
 
 ![Figure of a time-independent GEV fit to extreme surge levels in Brest](results/GEV_fit_Brest.png)
-
-Please read the header of the file `tools_GESLA.py` for more details on
-how to obtain the GESLA-2 surge dataset.
-
-The time-dependent GEV model can also depend on the value of a climate
-index like NAO (North Atlantic Oscillation).  This is shown in the file
-`Time-dependent_GEV_fit_with_NAO.py`, which extends the example
-`Time-dependent_GEV_fit.py`.  It requires that climate index data has
-been downloaded from https://psl.noaa.gov/gcos_wgsp/Timeseries/, see
-`tools_climate.py` for more information.
