@@ -8,7 +8,7 @@ from scipy import optimize
 
 from advanced_GEV_analysis import negative_log_likelihood, Modifiers, get_month_selection
 from advanced_GEV_analysis import compute_amplitude_and_phase, check_significance
-from tools_surge import load_data, Timeseries, Subseries
+from tools_surge import load_data, Timeseries
 
 
 data = load_data("Brest", Timeseries.SKEW_SURGE_GESLA)

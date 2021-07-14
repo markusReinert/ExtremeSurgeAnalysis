@@ -12,7 +12,7 @@ from scipy import optimize
 from advanced_GEV_analysis import negative_log_likelihood, Modifiers
 from advanced_GEV_analysis import get_month_selection
 from advanced_GEV_analysis import compute_amplitude_and_phase, check_significance
-from tools_surge import load_data, Timeseries, Subseries
+from tools_surge import load_data, Timeseries
 from tools_climate import load_NOAA_data, ClimateIndex
 
 

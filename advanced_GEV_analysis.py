@@ -116,7 +116,7 @@ class Modifiers(Enum):
     """Modifiers that can be used to make the GEV model time-dependent."""
     LINEAR_TREND = "linear trend"
     QUADRATIC_TREND = "quadratic trend"
-    SEASONAL_OSCILLATION = "seasonal oscillation"  # or "annual cycle"
+    SEASONAL_OSCILLATION = "seasonal oscillation"  # also called "annual cycle"
     SEASONAL_WITH_PHASE = "seasonal with phase"
     SEMIANNUAL_CYCLE = "semiannual cycle"
     CLIMATE_INDEX = "climate index"

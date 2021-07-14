@@ -11,7 +11,7 @@ from matplotlib.ticker import ScalarFormatter
 from advanced_GEV_analysis import negative_log_likelihood, XI_THRESHOLD
 from advanced_GEV_analysis import get_month_selection, get_year_selection
 from tools_errors import format_GEV_parameters, get_error_bounds
-from tools_surge import load_data, Timeseries, Subseries
+from tools_surge import load_data, Timeseries
 
 
 def GEV(x, mu, sigma, xi):

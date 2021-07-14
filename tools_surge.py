@@ -26,20 +26,15 @@ class Timeseries(Enum):
     SKEW_SURGE_GESLA = "skew surge (GESLA-2)"
 
 
-class Subseries(Enum):
-    HIGH_TIDE_SURGE = "high tide surge"
-    LOW_TIDE_SURGE = "low tide surge"
-
-
-def load_data(city: str, dataset: Timeseries, year_start=None, year_end=None, qualifiers=[]):
-    """Get ‘dataset’ for ‘city’ from ‘year_start’ to ‘year_end’ after applying ‘qualifiers’.
+def load_data(city: str, dataset: Timeseries, year_start=None, year_end=None, include_low_tide_surge=False):
+    """Get ‘dataset’ for ‘city’ from ‘year_start’ to ‘year_end’.
 
     The returned object is a dictionary with the following keys:
      - city (string, the same as the input value)
      - name (string, short description of the dataset)
      - full_name (string, long description of the dataset)
-     - year_start (int, first valid year of the timeseries)
-     - year_end (int, last valid year of the timeseries)
+     - year_start (int, first valid year of the time series)
+     - year_end (int, last valid year of the time series)
      - t (array, time values in s)
      - h (array, height values in cm)
 
@@ -48,14 +43,19 @@ def load_data(city: str, dataset: Timeseries, year_start=None, year_end=None, qu
     and inclusive if given.  They work even if no data for the given
     years exists, in which case the returned values of ‘year_start’ and
     ‘year_end’ will be set to the actual first and last year for which
-    there is data within the given period
+    there is data within the given period.
 
-    Note that SKEW_SURGE_GESLA contains only high tide surge and
-    includes variations in the mean sea level.  On the other hand,
-    SKEW_SURGE is only available for Brest, uses a yearly tidal
-    prediction so that the mean sea level rise is not part of the surge,
-    and can contain high tide surge or low tide surge or both.  Use the
-    argument ‘qualifiers’ to choose between high or low tide surge.
+    The surge dataset by Reinert et al. (2021) is only available for
+    Brest.  It contains both high and low tide skew surge levels, but by
+    default, only high tide surge levels are used.  To also include low
+    tide surge, set the corresponding parameter to True.  Surge levels
+    by Reinert et al. (2021) are relative to the annual mean sea level.
+
+    For the GESLA-2 skew surge dataset by Marcos & Woodworth (2017),
+    several cities are available.  This dataset contains only high tide
+    surge levels, so include_low_tide_surge must be False.  Surge levels
+    in the GESLA-2 dataset contain variations in the mean sea level, in
+    particular the mean sea level rise.
     """
     # Initialize the dictionary that is returned
     data = {
@@ -78,27 +78,16 @@ def load_data(city: str, dataset: Timeseries, year_start=None, year_end=None, qu
         print("Reading", data["full_name"], "for", data["city"])
         data["t"], data["h"], high_tides = np.load(SKEW_SURGE_FILE)
         high_tides = np.array(high_tides, dtype=bool)
-        if Subseries.HIGH_TIDE_SURGE in qualifiers and Subseries.LOW_TIDE_SURGE in qualifiers:
-            # High and low tide surge together give all surge levels
-            pass
-        elif Subseries.HIGH_TIDE_SURGE in qualifiers:
-            print("Restricting to high tide surge")
+        if include_low_tide_surge:
+            print("Using both high and low tide surge levels")
+        else:
             data["name"] = "high tide " + data["name"]
             data["full_name"] = "high tide " + data["full_name"]
             data["t"] = data["t"][high_tides]
             data["h"] = data["h"][high_tides]
-        elif Subseries.LOW_TIDE_SURGE in qualifiers:
-            print("Restricting to low tide surge")
-            data["name"] = "low tide " + data["name"]
-            data["full_name"] = "low tide " + data["full_name"]
-            data["t"] = data["t"][~high_tides]
-            data["h"] = data["h"][~high_tides]
-        else:
-            # No restriction to high or low tide, that means all surge levels
-            pass
     elif dataset == Timeseries.SKEW_SURGE_GESLA:
-        if qualifiers:
-            raise ValueError("GESLA-2 surge dataset does not take any qualifiers.")
+        if include_low_tide_surge:
+            raise ValueError("GESLA-2 surge dataset does not contain low tide surge levels.")
         data["name"] = "surge (GESLA-2)"
         data["full_name"] = "skew surge of GESLA-2 (Marcos & Woodworth 2017)"
         filename = get_GESLA_surge_filename(city)
