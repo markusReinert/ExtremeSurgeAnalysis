@@ -8,31 +8,10 @@ from scipy import optimize
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 
-from advanced_GEV_analysis import negative_log_likelihood, XI_THRESHOLD
+from advanced_GEV_analysis import negative_log_likelihood, GEV
 from advanced_GEV_analysis import get_month_selection, get_year_selection
 from tools_errors import format_GEV_parameters, get_error_bounds
 from tools_surge import load_data, Timeseries
-
-
-def GEV(x, mu, sigma, xi):
-    """Cumulative distribution function (CDF) of a GEV."""
-    if abs(xi) < XI_THRESHOLD:
-        # Use a Gumbel distribution
-        return np.exp(-np.exp(-((x - mu) / beta)))
-    elif xi > 0:
-        # For xi > 0, the support of GEV has the lower bound mu-sigma/xi
-        x_min = mu - sigma / xi
-        y = np.zeros_like(x, dtype=float)
-        y[x <= x_min] = 0
-        y[x > x_min] = np.exp(-((1 + xi * ((x[x > x_min] - mu) / sigma)) ** (-1 / xi)))
-        return y
-    else:
-        # For xi < 0, the support of GEV has the upper bound mu-sigma/xi
-        x_max = mu - sigma / xi
-        y = np.zeros_like(x, dtype=float)
-        y[x < x_max] = np.exp(-((1 + xi * ((x[x < x_max] - mu) / sigma)) ** (-1 / xi)))
-        y[x >= x_max] = 1
-        return y
 
 
 data = load_data("Brest", Timeseries.SKEW_SURGE_GESLA)

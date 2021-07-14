@@ -274,6 +274,27 @@ def time_dependent_GEV_parameters(
     return mu, sigma, xi
 
 
+def GEV(x, mu, sigma, xi):
+    """Cumulative distribution function (CDF) of a GEV."""
+    if abs(xi) < XI_THRESHOLD:
+        # Use a Gumbel distribution
+        return np.exp(-np.exp(-((x - mu) / beta)))
+    elif xi > 0:
+        # For xi > 0, the support of GEV has the lower bound mu-sigma/xi
+        x_min = mu - sigma / xi
+        y = np.zeros_like(x, dtype=float)
+        y[x <= x_min] = 0
+        y[x > x_min] = np.exp(-((1 + xi * ((x[x > x_min] - mu) / sigma)) ** (-1 / xi)))
+        return y
+    else:
+        # For xi < 0, the support of GEV has the upper bound mu-sigma/xi
+        x_max = mu - sigma / xi
+        y = np.zeros_like(x, dtype=float)
+        y[x < x_max] = np.exp(-((1 + xi * ((x[x < x_max] - mu) / sigma)) ** (-1 / xi)))
+        y[x >= x_max] = 1
+        return y
+
+
 def get_year_selection(year, time_array):
     """Get the Boolean array that selects ‘year’ from ‘time_array’.
 
