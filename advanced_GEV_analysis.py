@@ -152,6 +152,12 @@ def negative_log_likelihood(
     combination, then the likelihood is zero, so the log-likelihood is
     -infinity and the negative log-likelihood is +infinity.  In this
     case, np.infty is returned.
+
+    Since this function may return np.infty, scipy's optimize may raise
+    a “RuntimeWarning: invalid value encountered in subtract”.  This
+    warning can be suppressed by wrapping the call to optimize in “with
+    np.errstate(invalid="ignore"):”.  This warning does not appear when
+    np.infty is replaced by a very large number, e.g. 1e200.
     """
     if verbose:
         print(params)
@@ -335,6 +341,9 @@ def check_significance(D, k, alpha=0.05):
 
 def compute_amplitude_and_phase(coeff_cos, coeff_sin, std_cos, std_sin):
     """Compute amplitude and phase of a*cos(t) + b*sin(t).
+
+    This function can be used to convert an expression of the form
+    a*cos(t) + b*sin(t) to amp * cos(t - phase).
 
     The input parameters are coeff_cos (=a) and coeff_sin (=b) and their
     respective standard errors.

@@ -124,8 +124,8 @@ for i, name in enumerate([
 print("Trends in cm per century, {} coefficients in cm per unit, "
       "xi dimensionless, other parameter values in cm.".format(data_cli["name"]))
 
-print("\nCompare time-dependent GEV model with linear {}-dependencies "
-      "to model without.".format(data_cli["name"]))
+print("\nCompare time-dependent GEV model with linear {0}-dependencies "
+      "to model without {0}-dependencies.".format(data_cli["name"]))
 D = 2 * (LL_cli - LL_trends)
 k = len(params_cli) - len(params_trends)
 check_significance(D, k)

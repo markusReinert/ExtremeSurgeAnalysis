@@ -6,17 +6,16 @@ Written by Markus Reinert, June 2020–July 2021.
 import numpy as np
 from scipy import optimize
 
-from advanced_GEV_analysis import negative_log_likelihood, Modifiers
-from advanced_GEV_analysis import get_month_selection
+from advanced_GEV_analysis import negative_log_likelihood, Modifiers, get_month_selection
 from advanced_GEV_analysis import compute_amplitude_and_phase, check_significance
 from tools_surge import load_data, Timeseries, Subseries
 
 
 data = load_data("Brest", Timeseries.SKEW_SURGE_GESLA)
 
-# Get the maximum value in every month and its date-time
-h_MM = []
+# Get (date-)time and height of the maximum surge level in every month
 t_MM = []
+h_MM = []
 for year in range(data["year_start"], data["year_end"] + 1):
     for month in range(1, 13):
         sel = get_month_selection(year, month, data["t"])
@@ -30,8 +29,8 @@ for year in range(data["year_start"], data["year_end"] + 1):
             else:
                 h_MM.append(value)
                 t_MM.append(data["t"][sel][i_max])
-h_MM = np.array(h_MM)
 t_MM = np.array(t_MM)
+h_MM = np.array(h_MM)
 
 
 # Fit time-independent GEV to the extreme values for a first estimate of the fit parameters
