@@ -18,7 +18,7 @@ from advanced_GEV_analysis import compute_amplitude_and_phase
 from tools_surge import load_data, Timeseries
 
 
-data = load_data("Brest", Timeseries.SKEW_SURGE_GESLA)
+data = load_data("Brest", Timeseries.SKEW_SURGE)
 
 # Get time (t), height (h), and year (y) of the monthly maxima (MM)
 t_MM = []
@@ -29,15 +29,9 @@ for year in range(data["year_start"], data["year_end"] + 1):
         sel = get_month_selection(year, month, data["t"])
         if np.any(sel):
             i_max = np.argmax(data["h"][sel])
-            value = data["h"][sel][i_max]
-            if value < -300:
-                # There is an error in the GESLA-2 skew surge
-                # dataset for Brest, which we want to catch here.
-                print("Neglecting unrealistic outlier of {} m.".format(value))
-            else:
-                h_MM.append(value)
-                t_MM.append(data["t"][sel][i_max])
-                y_MM.append(year)
+            t_MM.append(data["t"][sel][i_max])
+            h_MM.append(data["h"][sel][i_max])
+            y_MM.append(year)
 t_MM = np.array(t_MM)
 h_MM = np.array(h_MM)
 y_MM = np.array(y_MM)

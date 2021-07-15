@@ -16,7 +16,7 @@ from tools_surge import load_data, Timeseries
 from tools_climate import load_NOAA_data, ClimateIndex
 
 
-data = load_data("Brest", Timeseries.SKEW_SURGE_GESLA)
+data = load_data("Brest", Timeseries.SKEW_SURGE)
 data_cli = load_NOAA_data(ClimateIndex.NAO)
 
 # Get the maximum value in every month and its date-time,
@@ -30,13 +30,7 @@ for year in range(data["year_start"], data["year_end"] + 1):
         sel = get_month_selection(year, month, data["t"])
         if np.any(sel):
             i_max = np.argmax(data["h"][sel])
-            value = data["h"][sel][i_max]
-            if value < -300:
-                # There is an error in the GESLA-2 skew surge
-                # dataset for Brest, which we want to catch here.
-                print("Neglecting unrealistic outlier of {} m in surge data.".format(value))
-                continue
-            h_MM.append(value)
+            h_MM.append(data["h"][sel][i_max])
             t_MM.append(data["t"][sel][i_max])
             # Check if there is climate data for this year
             if year in cli_years:
@@ -140,10 +134,3 @@ for name, i_cos in zip(["mu", "sigma"], [2, 7]):
     )
     print("  Amplitude = ({:.1f} ± {:.1f}) cm".format(amp, std_amp))
     print("  Phase = ({:.0f} ± {:.0f})°".format(np.rad2deg(phase), np.rad2deg(std_phase)))
-
-
-print(
-    "\nNote that surge levels in the GESLA-2 dataset are NOT corrected "
-    "for the mean sea level rise, so a trend in mu, comparable to the "
-    "mean sea level rise in {}, is expected, when this dataset is used.".format(data["city"])
-)
