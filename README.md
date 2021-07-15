@@ -6,7 +6,10 @@ Statistical extreme value analysis of storm surge levels with Python.
 This repository contains the code belonging to a submitted manuscript by
 Markus Reinert *et al.* (2021).  The reference to the paper will be
 added here as soon as it is published.  When you use the code in this
-repository, please cite our paper and include the reference to it.
+repository, please cite our paper and include the reference to the
+version of this repository that you are using.  Currently, there is one
+version of this repository (v1.0.0) with the DOI
+[10.5281/zenodo.5107019](https://doi.org/10.5281/zenodo.5107019).
 
 Note that the data used in the manuscript cannot be published here for
 copyright reasons and needs to be obtained separately.  The surge
