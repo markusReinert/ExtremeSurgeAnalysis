@@ -1,9 +1,8 @@
 """Analyse extreme surges in different stations with monthly GEV models.
 
-This code implements the analysis presented in the Discussion of the
-manuscript by Reinert et al. (2021).
+This code implements the analysis presented by Reinert et al. (2021).
 
-Written by Markus Reinert, August 2020–July 2021.
+Written by Markus Reinert, August 2020 to October 2021.
 """
 
 import numpy as np
@@ -17,25 +16,49 @@ from tools_surge import load_data, Timeseries
 # Select months of interest (here: March and October)
 selected_months = [3, 10]
 
-# Select stations of interest and specify the best possible error tolerance
-# for the fit over the full year and over each selected month
-cities = {
-    "Newlyn": {"year": 5e-5, 3: 1e-5, 10: 5e-5},
-    "Cherbourg": {"year": 5e-5, 3: 1e-5, 10: 1e-5},
-    "Le Havre": {"year": 5e-4, 3: 4e-5, 10: 1e-4},
-    "Brest (our data)": {"year": 1e-5, 3: 5e-5, 10: 5e-5},
-    "Brest (GESLA-2)": {"year": 5e-5, 3: 1e-4, 10: 1e-5},
-    "La Rochelle": {"year": 1e-5, 3: 1e-5, 10: 1e-5},
-    "Saint-Jean-de-Luz": {"year": 5e-5, 3: 5e-5, 10: 5e-5},
-    "Santander": {"year": 5e-5, 3: 1e-5, 10: 1e-5},
-    "La Coruna": {"year": 5e-5, 3: 1e-5, 10: 1e-5},
-    "Vigo": {"year": 1e-4, 3: 1e-5, 10: 5e-5},
-}
+# Select stations of interest
+cities = [
+    "Newlyn",
+    "Cherbourg",
+    "Le Havre",
+    "Brest (our data)",
+    "Brest (GESLA-2)",
+    "La Rochelle",
+    "Saint-Jean-de-Luz",
+    "Santander",
+    "La Coruna",
+    "Vigo",
+]
 
 # Select the period of interest
 year_start = 1950
 year_end = 2000
 
+
+# Define ranges for initial parameter values
+# Explanation:
+# To fit the time-dependent GEV model to monthly maxima using
+# scipy.optimize.minimize, we need to specify an initial value for each
+# parameter of the model.  These initial values should be close to
+# parameter values of the best fit.  Since the best fit varies from
+# station to station and from month to month, there is probably no set
+# of initial values that works well for every station.  Therefore, we
+# search at first for the best fit over a discrete space of common
+# parameter values, and we then use these values as initial values to
+# compute the actual best fit.  With the values given here, determining
+# the initial values takes between 1 and 2 seconds on a normal PC, which
+# we find an acceptable computation time.
+mu0_range = np.linspace(5, 40, 5)
+mu1_range = np.linspace(-50, 50, 10)
+si0_range = np.linspace(5, 25, 5)
+si1_range = np.linspace(-50, 50, 10)
+xi_range = np.linspace(-0.6, 0.2, 11)
+n_combinations = (
+    mu0_range.size * mu1_range.size * si0_range.size * si1_range.size * xi_range.size
+)
+print("Number of initial value combinations:", n_combinations)
+t_calculation = 50e-6  # time typically required to compute negative_log_likelihood
+print(f"Testing all combinations will take about {n_combinations*t_calculation:.1f} seconds")
 
 # Compute for each station the linear trend in each month of interest
 # and over the whole year, as well as their standard errors
@@ -84,7 +107,7 @@ for city in cities:
                 [Modifiers.LINEAR_TREND, Modifiers.SEASONAL_OSCILLATION],
                 [Modifiers.LINEAR_TREND, Modifiers.SEASONAL_OSCILLATION],
             ),
-            options={"gtol": cities[city]["year"]},
+            options={"gtol": 1e-4},
         )
     if not result_full_year.success:
         print("Warning:", result_full_year.message)
@@ -100,27 +123,42 @@ for city in cities:
     for month in selected_months:
         print("Month:", month)
         print("#years =", t_MM[month].size)
-        # Fit time-independent GEV model for this month to obtain good initial parameters
-        with np.errstate(invalid="ignore"):
-            # Do not warn when the function value infinity occurs in the optimisation
-            result_timeindep = optimize.minimize(
-                negative_log_likelihood,
-                [fit_params[0], fit_params[4], fit_params[-1]],
-                args=(h_MM[month],),
-                options={"gtol": cities[city][month]},
-            )
-        if not result_timeindep.success:
-            print("Warning:", result_timeindep.message, "(time-independent model)")
+        # Find good initial parameters for the fit
+        least_nLL = np.infty
+        best_mu0 = fit_params[0]
+        best_mu1 = 1.0
+        best_si0 = fit_params[4]
+        best_si1 = 1.0
+        best_xi = fit_params[-1]
+        for mu0 in mu0_range:
+            for mu1 in mu1_range:
+                for si0 in si0_range:
+                    for si1 in si1_range:
+                        for xi in xi_range:
+                            nLL = negative_log_likelihood(
+                                [mu0, mu1, si0, si1, xi],
+                                h_MM[month],
+                                t_MM[month],
+                                [Modifiers.LINEAR_TREND],
+                                [Modifiers.LINEAR_TREND],
+                            )
+                            if nLL < least_nLL:
+                                least_nLL = nLL
+                                best_mu0 = mu0
+                                best_mu1 = mu1
+                                best_si0 = si0
+                                best_si1 = si1
+                                best_xi = xi
         # Fit GEV model with linear trends in the parameters for this month
         with np.errstate(invalid="ignore"):
             # Do not warn when the function value infinity occurs in the optimisation
             result_month = optimize.minimize(
                 negative_log_likelihood,
-                [result_timeindep.x[0], 1, result_timeindep.x[1], 1, result_timeindep.x[2]],
+                [best_mu0, best_mu1, best_si0, best_si1, best_xi],
                 args=(
                     h_MM[month], t_MM[month], [Modifiers.LINEAR_TREND], [Modifiers.LINEAR_TREND]
                 ),
-                options={"gtol": cities[city][month]},
+                options={"gtol": 1e-4},
             )
         if not result_month.success:
             print("Warning:", result_month.message)
@@ -143,7 +181,7 @@ ax.set_title(
 ax.set_ylabel("Difference of monthly and yearly trends [cm/century]")
 for month in selected_months:
     ax.errorbar(
-        cities.keys(),
+        cities,
         [
             linear_trends[month][i_city] - linear_trends["year"][i_city]
             for i_city in range(len(cities))
