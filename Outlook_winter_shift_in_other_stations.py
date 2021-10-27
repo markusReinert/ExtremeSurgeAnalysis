@@ -136,9 +136,11 @@ for city in cities:
 
 fig, ax = plt.subplots()
 ax.set_title(
-    "Relative change in the location parmeter between {} and {}".format(year_start, year_end)
+    "Relative linear trend of the location parameter for the period {} to {}".format(
+        year_start, year_end
+    )
 )
-ax.set_ylabel("Change of location parameter in cm")
+ax.set_ylabel("Difference of monthly and yearly trends [cm/century]")
 for month in selected_months:
     ax.errorbar(
         cities.keys(),
@@ -146,7 +148,10 @@ for month in selected_months:
             linear_trends[month][i_city] - linear_trends["year"][i_city]
             for i_city in range(len(cities))
         ],
-        linear_trends_std[month],
+        [
+            np.sqrt(linear_trends_std[month][i_city]**2 + linear_trends_std["year"][i_city]**2)
+            for i_city in range(len(cities))
+        ],
         fmt="o",
         label="Month: {}".format(month),
     )
