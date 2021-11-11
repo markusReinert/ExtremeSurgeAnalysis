@@ -1,8 +1,9 @@
 """Analyse extreme surges in different stations with monthly GEV models.
 
-This code implements the analysis presented by Reinert et al. (2021).
+This code implements the analysis presented by Reinert et al. (2021)
+in Section 4.4.
 
-Written by Markus Reinert, August 2020 to October 2021.
+Written by Markus Reinert, August 2020 to November 2021.
 """
 
 import numpy as np
@@ -172,14 +173,19 @@ for city in cities:
         linear_trends_std[month].append(fit_errors_month[1])
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(15, 6))
 ax.set_title(
     "Relative linear trend of the location parameter for the period {} to {}".format(
         year_start, year_end
-    )
+    ) + "\n(error bars denote 95 % confidence intervals)"
 )
 ax.set_ylabel("Difference of monthly and yearly trends [cm/century]")
 for month in selected_months:
+    # Denote with error bars the 95 % confidence intervals.
+    # The 95 % confidence intervals are computed by multiplying
+    # standard errors with 1.96.  The standard error is computed by
+    # combining the standard errors of month and full year according
+    # to the standard formula for error propagation.
     ax.errorbar(
         cities,
         [
@@ -187,7 +193,9 @@ for month in selected_months:
             for i_city in range(len(cities))
         ],
         [
-            np.sqrt(linear_trends_std[month][i_city]**2 + linear_trends_std["year"][i_city]**2)
+            1.96 * np.sqrt(
+                linear_trends_std[month][i_city]**2 + linear_trends_std["year"][i_city]**2
+            )
             for i_city in range(len(cities))
         ],
         fmt="o",
