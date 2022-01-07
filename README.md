@@ -4,11 +4,21 @@
 
 Statistical extreme value analysis of storm surge levels with Python.
 
-This repository contains the code belonging to a submitted manuscript by
-Markus Reinert *et al.* (2021).  The reference to the paper will be
-added here as soon as it is published.  When you use the code in this
-repository, please cite our paper and include the reference to the
-release that you are using.
+This repository contains the code belonging to the peer-reviewed article:
+
+Markus Reinert, Lucia Pineau-Guillou, Nicolas Raillard, & Bertrand
+Chapron (2021). **Seasonal shift in storm surges at Brest revealed by
+extreme value analysis.** *Journal of Geophysical Research: Oceans,*
+126, e2021JC017794.
+[DOI: 10.1029/2021JC017794](https://doi.org/10.1029/2021JC017794)
+
+When you use the code in this repository, please cite our paper using
+this information.
+
+Every version (or “Release”) of this code has also an individual DOI.
+Please cite the DOI of the version you use, too.  You find the DOIs to
+all versions by clicking on the DOI badge above.  This badge always
+redirects to the latest code version.
 
 Note that the data used in the manuscript cannot be published here for
 copyright reasons, and thus needs to be obtained separately.  The surge
@@ -31,7 +41,7 @@ calculated with the script
 [Time-dependent_GEV_fit_with_NAO.py](Time-dependent_GEV_fit_with_NAO.py).
 
 The functions and methods in this repository can also be used with other
-datasets, for related analyses, or in similar studies.  In particular,
+datasets or for other studies.  In particular,
 the script [advanced_GEV_analysis.py](advanced_GEV_analysis.py) may be
 useful.  Its main part is an implementation of the methods described in
 the book “An Introduction to Statistical Modeling of Extreme Values” by
