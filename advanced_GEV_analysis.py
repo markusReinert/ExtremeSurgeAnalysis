@@ -93,6 +93,7 @@ Possible extensions and improvements:
     oscillation with a phase.
 
 Written by Markus Reinert, August 2020, February 2021.
+Extended by Marvin Lorenz and Markus Reinert, March 2022.
 """
 
 import calendar
@@ -293,6 +294,89 @@ def GEV(x, mu, sigma, xi):
         y[x < x_max] = np.exp(-((1 + xi * ((x[x < x_max] - mu) / sigma)) ** (-1 / xi)))
         y[x >= x_max] = 1
         return y
+
+
+def GEV_return_level(t, mu, sigma, xi, values_per_year=1.0):
+    """Compute return level z for return period t of a GEV distribution.
+
+    A random variable with the distribution GEV(mu, sigma, xi) will
+    typically reach a value as high as z once every t years, where z is
+    the value returned by this function.
+
+    That means, for any t >= 1, the following call returns t:
+    return_period(GEV(GEV_return_level(t, mu, sigma, xi), mu, sigma, xi))
+    where return_period(p) = 1 / (1 - p).
+
+    If there is more than one value per year, i.e., not annual maxima
+    but for example monthly maxima are used, then the optional argument
+    values_per_year specifies how many values there are on average per
+    year (12 in the case of monthly maxima, or less if individual months
+    are missing).  In this case, the return_period (see above) is
+    defined as return_period(p) = 1 / (1 - p**values_per_year).
+
+    Reference: Equations (3.4) and (3.10) of Coles (2001)
+    """
+    p = 1 / t
+    if values_per_year != 1.0:
+        # If there is more than one value per year, we need to correct p
+        p = 1 - (1 - p)**(1/values_per_year)
+    if abs(xi) < XI_THRESHOLD:
+        # Gumbel distribution
+        return mu - sigma * np.log(-np.log(1 - p))
+    else:
+        # non-Gumbel GEV distribution
+        return mu - sigma / xi * (1 - (-np.log(1 - p)) ** (-xi))
+
+
+def GEV_standard_error(t, mu, sigma, xi, V, values_per_year=1.0):
+    """Compute the standard error of the return level for return period t.
+
+    When the distribution of a random variable is estimated to be
+    GEV(mu, sigma, xi) with the variance-covariance matrix V, then the
+    uncertainty associated with the return level z that belongs to the
+    return period t (see function GEV_return_level) is the value
+    returned by this function.  The upper (resp. lower) bound of the 95%
+    confidence interval can be approximated by adding (subtracting) 1.96
+    times the value returned by this function to z.
+
+    The main computation in this function is grad_z_p * V * grad_z_p,
+    where * is a matrix multiplication if grad_z_p is 1-dimensional.
+    This is basically a scalar product between grad_z_p and V * grad_z_p
+    and can be written as <grad_z_p|V|grad_z_p> in the bra-ket notation
+    occasionally used in physics.  The square root of this product is
+    returned by this function, in order to have the standard error and
+    not the variance.
+
+    This function can be used with t as a vector instead of a single
+    value, in which case a vector of the same size as t is returned.
+    Note that in this case, grad_z_p is a matrix instead of a vector, so
+    grad_z_p * V * grad_z_p differs from regular matrix multiplication.
+
+    Reference: Equation (3.11) of Coles (2001)
+    """
+    p = 1 / t
+    if values_per_year != 1.0:
+        # If there is more than one value per year, we need to correct p
+        p = 1 - (1 - p)**(1/values_per_year)
+    y_p = -np.log(1 - p)
+    grad_z_p = np.array([
+        np.ones_like(y_p),
+        -xi**(-1) * (1 - y_p**(-xi)),
+        sigma * xi**(-2) * (1 - y_p**(-xi)) - sigma * xi**(-1) * y_p**(-xi) * np.log(y_p),
+    ])
+    return np.sqrt(np.sum(grad_z_p * np.dot(V, grad_z_p), axis=0))
+
+
+def format_GEV_parameters(parameters, errors, join_str=", "):
+    """Create a string that contains the GEV parameters in a nice format."""
+    names = ["\\mu", "\\sigma", "\\xi"]
+    # Write the error with one significant digit
+    digits = [int(-np.floor(np.log10(e))) if e < 1 else 0 for e in errors]
+    return join_str.join(
+        "${name} = {param:.{digits}f} \\pm {std:.{digits}f}$".format(
+            name=n, param=p, std=e, digits=d
+        ) for n, p, e, d in zip(names, parameters, errors, digits)
+    )
 
 
 def get_year_selection(year, time_array):

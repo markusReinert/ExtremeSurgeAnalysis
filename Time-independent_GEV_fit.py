@@ -1,6 +1,6 @@
 """Make a time-independent GEV fit to monthly maxima (MM).
 
-Written by Markus Reinert, June 2020–July 2021.
+Written by Markus Reinert, June 2020–March 2022.
 """
 
 import numpy as np
@@ -8,9 +8,8 @@ from scipy import optimize
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 
-from advanced_GEV_analysis import negative_log_likelihood, GEV
-from advanced_GEV_analysis import get_month_selection, get_year_selection
-from tools_errors import format_GEV_parameters, get_error_bounds
+from advanced_GEV_analysis import negative_log_likelihood, get_year_selection, get_month_selection
+from advanced_GEV_analysis import GEV_return_level, GEV_standard_error, format_GEV_parameters
 from tools_surge import load_data, Timeseries
 
 
@@ -36,30 +35,23 @@ for year in range(data["year_start"], data["year_end"] + 1):
 h_MM = np.array(h_MM)
 n_months = len(h_MM)
 
-# Define a function to compute the return period from a CDF
-return_period = lambda P: 1 / (1 - P**(n_months / n_years))
-
 # Fit a GEV to the extreme values
 result = optimize.minimize(negative_log_likelihood, [10, 15, -0.1], args=(h_MM,))
 if not result.success:
     print("Warning:", result.message)
 params = result.x
-errors = np.sqrt(np.diag(result.hess_inv))
+covars = result.hess_inv
+errors = np.sqrt(np.diag(covars))
 
-# Calculate the CDF and the return periods of the fit
-x_axis = np.linspace(min(h_MM), max(h_MM), 1000)
-P_MM = GEV(x_axis, *params)
-T_MM = return_period(P_MM)
-
-# Calculate the 95 % confidence interval of the fit
-n_sigma = 1.96
-P_MM_bounds = get_error_bounds(GEV, x_axis, params, errors, n_sigma)
-T_MM_bounds = [return_period(P_bound) for P_bound in P_MM_bounds]
+# Calculate the graph and the standard error of the fitted GEV model
+t_axis = np.logspace(0, 3, 10_000)[1:]  # exclude t = 1 to avoid value -infinity
+h_model = GEV_return_level(t_axis, *params, values_per_year=n_months/n_years)
+h_std_error = GEV_standard_error(t_axis, *params, covars, values_per_year=n_months/n_years)
 
 # Calculate the CDF and the return periods of the empirical data
 h_empirical = sorted(h_MM)
 P_empirical = (1 + np.arange(n_months)) / (1 + n_months)
-T_empirical = return_period(P_empirical)
+T_empirical = 1 / (1 - P_empirical**(n_months / n_years))
 
 
 fig, ax = plt.subplots()
@@ -77,9 +69,14 @@ ax.semilogx(
     T_empirical, h_empirical, "k.",
     label="Empirical return periods ({} data points)".format(n_months),
 )
-ax.semilogx(T_MM, x_axis, label="GEV fit: " + format_GEV_parameters(params, errors))
-assert n_sigma == 1.96, "label 95 % CI is not correct"
-ax.fill_betweenx(x_axis, *T_MM_bounds, alpha=0.3, label="95 % confidence interval")
+ax.semilogx(t_axis, h_model, label="GEV fit: " + format_GEV_parameters(params, errors))
+ax.fill_between(
+    t_axis,
+    h_model + 1.96 * h_std_error,
+    h_model - 1.96 * h_std_error,
+    alpha=0.3,
+    label="95 % confidence interval",
+)
 
 ax.legend()
 ax.set_xlim(0.9, 200)
