@@ -46,9 +46,10 @@ the script [advanced_GEV_analysis.py](advanced_GEV_analysis.py) may be
 useful.  Its main part is an implementation of the methods described in
 the book “An Introduction to Statistical Modeling of Extreme Values” by
 Stuart Coles (2001).  Example usage of this library is shown for
-[time-independent GEV models](Time-independent_GEV_fit.py) and for
-[time-dependent GEV models](Time-dependent_GEV_fit.py).  With the surge
-levels for Brest from the GESLA-2 dataset, the time-independent GEV
-model looks like this:
+[time-independent GEV models](Time-independent_GEV_fit.py), for
+[time-dependent GEV models](Time-dependent_GEV_fit.py), and for
+[GEV models of annual maxima](Time-independent_GEV_fit_for_annual_maxima.py).
+With the surge levels for Brest from the GESLA-2 dataset, the
+time-independent GEV model of monthly maxima looks like this:
 
-![Figure of a time-independent GEV fit to extreme surge levels in Brest](results/GEV_fit_Brest.png)
+![Figure of a time-independent GEV fit to extreme surge levels (monthly maxima) in Brest](results/GEV_fit_Brest.png)
