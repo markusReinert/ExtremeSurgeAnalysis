@@ -4,7 +4,9 @@
 
 Statistical extreme value analysis of storm surge levels with Python.
 
-This repository contains the code belonging to the peer-reviewed article:
+## Reference
+
+This repository contains the code to the peer-reviewed article:
 
 Markus Reinert, Lucia Pineau-Guillou, Nicolas Raillard, & Bertrand
 Chapron (2021). **Seasonal shift in storm surges at Brest revealed by
@@ -12,19 +14,20 @@ extreme value analysis.** *Journal of Geophysical Research: Oceans,*
 126, e2021JC017794.
 [DOI: 10.1029/2021JC017794](https://doi.org/10.1029/2021JC017794)
 
-When you use the code in this repository, please cite our paper using
-this information.
+When using the code in this repository, please cite this paper.
 
-Every version (or “Release”) of this code has also an individual DOI.
-Please cite the DOI of the version you use, too.  You find the DOIs to
+Every version (or “Release”) of this code has an individual DOI.
+Please also cite the DOI of the version you use.  You find the DOIs to
 all versions by clicking on the DOI badge above.  This badge always
 redirects to the latest code version.
 
-Note that the data used in the manuscript cannot be published here for
-copyright reasons, and thus needs to be obtained separately.  The surge
+## Description
+
+The data used in the paper cannot be published here for
+copyright reasons and needs to be obtained separately.  The surge
 levels at Brest can be computed from the tide gauge measurements
 published on the website https://data.shom.fr/, using the method
-described in the manuscript, or can be obtained from the corresponding
+described by Reinert *et al.* (2021), or can be obtained from the corresponding
 author upon request.  The GESLA-2 surge dataset of Woodworth et
 al. (2017) can be obtained from the website https://gesla.org/, as
 explained in [tools_GESLA.py](tools_GESLA.py).  The climate index data
@@ -32,7 +35,7 @@ explained in [tools_GESLA.py](tools_GESLA.py).  The climate index data
 https://psl.noaa.gov/gcos_wgsp/Timeseries/, as explained in
 [tools_climate.py](tools_climate.py).
 
-Given the datasets, the main results of the manuscript can be reproduced
+Given the datasets, the main results of the paper can be reproduced
 with the scripts for [Method 1](Method_1_sliding_window_analysis.py),
 [Method 2](Method_2_monthly_analysis.py), and
 [different stations](Result_winter_shift_in_different_stations.py).
@@ -53,3 +56,19 @@ With the surge levels for Brest from the GESLA-2 dataset, the
 time-independent GEV model of monthly maxima looks like this:
 
 ![Figure of a time-independent GEV fit to extreme surge levels (monthly maxima) in Brest](results/GEV_fit_Brest.png)
+
+
+## Publications
+
+Here is a list of publications using the code of this repository.
+If any publications are missing, please let me know.
+
+1. Markus Reinert, Lucia Pineau-Guillou, Nicolas Raillard, & Bertrand Chapron (2021).
+*Seasonal shift in storm surges at Brest revealed by extreme value analysis.*
+Journal of Geophysical Research: Oceans.
+[DOI: 10.1029/2021JC017794](https://doi.org/10.1029/2021JC017794)
+
+2. Jean-Baptiste Roustan, Lucia Pineau-Guillou, Bertrand Chapron, Nicolas Raillard, & Markus Reinert (2022).
+*Shift of the storm surge season in Europe due to climate variability.*
+Scientific Reports.
+[DOI: 10.1038/s41598-022-12356-5](https://doi.org/10.1038/s41598-022-12356-5)
