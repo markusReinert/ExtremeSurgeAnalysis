@@ -72,3 +72,8 @@ Journal of Geophysical Research: Oceans.
 *Shift of the storm surge season in Europe due to climate variability.*
 Scientific Reports.
 [DOI: 10.1038/s41598-022-12356-5](https://doi.org/10.1038/s41598-022-12356-5)
+
+3. Kiesel, J., Lorenz, M., König, M., Gräwe, U., & Vafeidis, A. T. (2023).
+*Regional assessment of extreme sea levels and associated coastal flooding along the German Baltic Sea coast.*
+Natural Hazards and Earth System Sciences.
+[DOI: 10.5194/nhess-23-2961-2023](https://doi.org/10.5194/nhess-23-2961-2023)
