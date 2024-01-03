@@ -4,9 +4,10 @@
 
 Statistical extreme value analysis of storm surge levels with Python.
 
-## Reference
+## Reference and Documentation
 
-This repository contains the code to the peer-reviewed article:
+The statistical analysis methods implemented by the code in this
+repository are documented in the peer-reviewed article:
 
 Markus Reinert, Lucia Pineau-Guillou, Nicolas Raillard, & Bertrand
 Chapron (2021). **Seasonal shift in storm surges at Brest revealed by
@@ -14,10 +15,11 @@ extreme value analysis.** *Journal of Geophysical Research: Oceans,*
 126, e2021JC017794.
 [DOI: 10.1029/2021JC017794](https://doi.org/10.1029/2021JC017794)
 
-When using the code in this repository, please cite this paper.
+**When using the code in this repository, please cite this paper.**
 
 Every version (or “Release”) of this code has an individual DOI.
-Please also cite the DOI of the version you use.  You find the DOIs to
+**Please also cite the DOI of the code version you are using.**
+You find the DOIs for
 all versions by clicking on the DOI badge above.  This badge always
 redirects to the latest code version.
 
@@ -44,7 +46,8 @@ calculated with the script
 [Time-dependent_GEV_fit_with_NAO.py](Time-dependent_GEV_fit_with_NAO.py).
 
 The functions and methods in this repository can also be used with other
-datasets or for other studies.  In particular,
+datasets or for other studies, see the examples in
+[Publications](#publications) below.  In particular,
 the script [advanced_GEV_analysis.py](advanced_GEV_analysis.py) may be
 useful.  Its main part is an implementation of the methods described in
 the book “An Introduction to Statistical Modeling of Extreme Values” by
@@ -58,7 +61,7 @@ time-independent GEV model of monthly maxima looks like this:
 ![Figure of a time-independent GEV fit to extreme surge levels (monthly maxima) in Brest](results/GEV_fit_Brest.png)
 
 
-## Publications
+## Publications<a name="publications"></a>
 
 Here is a list of publications using the code of this repository.
 If any publications are missing, please let me know.
