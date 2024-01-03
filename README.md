@@ -77,3 +77,8 @@ Scientific Reports.
 *Regional assessment of extreme sea levels and associated coastal flooding along the German Baltic Sea coast.*
 Natural Hazards and Earth System Sciences.
 [DOI: 10.5194/nhess-23-2961-2023](https://doi.org/10.5194/nhess-23-2961-2023)
+
+4. Lorenz, M., & Gräwe, U. (2023).
+*Uncertainties and discrepancies in the representation of recent storm surges in a non-tidal semi-enclosed basin: a hindcast ensemble for the Baltic Sea.*
+Ocean Science.
+[DOI: 10.5194/os-19-1753-2023](https://doi.org/10.5194/os-19-1753-2023)
